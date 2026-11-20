@@ -35,9 +35,7 @@ function EnvoyerUnPost(ctx, posts) {
     const erreur = validerPost(data)
 
     if (erreur) {
-        ctx.status = 400
-        ctx.body = { error: erreur }
-        return
+        ctx.throw(400, erreur)
     }
 
     const nouvelId = posts.length > 0
@@ -63,17 +61,13 @@ function ModifierUnPost(ctx, posts) {
     const post = posts.find((p) => p.id === Number(ctx.params.id))
 
     if (!post) {
-        ctx.status = 404
-        ctx.body = { error: 'Poste introuvable' }
-        return
+        ctx.throw(404, 'Post Introuvable')
     }
 
     const data = ctx.request.body
     const erreur = validerPost(data, { partiel: true })
     if (erreur) {
-        ctx.status = 400
-        ctx.body = { error: erreur }
-        return
+        ctx.throw(400, erreur)
     }
 
     Object.assign(post, nettoyer(data))
@@ -85,17 +79,13 @@ function RemplacerUnPost(ctx, posts) {
     const index = posts.findIndex((p) => p.id === Number(ctx.params.id))
 
     if (index === -1) {
-        ctx.status = 404
-        ctx.body = { error: 'Poste introuvable' }
-        return
+        ctx.throw(404, 'Post introuvable')
     }
 
     const data = ctx.request.body
     const erreur = validerPost(data)
     if (erreur) {
-        ctx.status = 400
-        ctx.body = { error: erreur }
-        return
+        ctx.throw(400, erreur)
     }
 
     posts[index] = { id: posts[index].id, ...nettoyer(data) }
@@ -107,9 +97,7 @@ function SupprimerUnPost(ctx, posts) {
     const index = posts.findIndex((p) => p.id === Number(ctx.params.id))
 
     if (index === -1) {
-        ctx.status = 404
-        ctx.body = { error: 'Poste introuvable' }
-        return
+        ctx.throw(404, 'Post introuvable')
     }
 
     posts.splice(index, 1)
